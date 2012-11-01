@@ -17,6 +17,7 @@ package org.openmrs.web.taglib;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletException;
@@ -26,6 +27,7 @@ import javax.servlet.jsp.tagext.TagSupport;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.Location;
 import org.openmrs.api.context.Context;
 import org.openmrs.util.OpenmrsUtil;
 import org.openmrs.web.taglib.fieldgen.FieldGenHandler;
@@ -189,7 +191,22 @@ public class FieldGenTag extends TagSupport {
 							output += unknownLabel;
 						}
 					}
-				} else if (type.indexOf("$") >= 0) {
+				} 
+				//Generates the dropdown for location datatype
+				else if (type.equals("location") ) {
+					List<Location> locations = Context.getLocationService().getRootLocations(true);
+					
+					output = "<select name=\"" + formFieldName + "\" id=\"" + formFieldName + "\">";
+					for (int i = 0; i < locations.size(); i++) {
+						output += "<option value=\"Unkonwn location\"" + ">";
+
+						output+= locations.get(i);
+						output += "</option>";
+					}
+					output += "</select> ";
+					
+				
+				}else if (type.indexOf("$") >= 0) {
 					// this could be an enum - if so, let's display it
 					String className = type;
 					

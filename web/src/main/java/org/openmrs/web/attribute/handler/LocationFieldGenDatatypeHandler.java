@@ -22,15 +22,15 @@ import org.apache.commons.lang.StringUtils;
 import org.openmrs.api.context.Context;
 import org.openmrs.customdatatype.CustomDatatype;
 import org.openmrs.customdatatype.InvalidCustomValueException;
-import org.openmrs.customdatatype.datatype.BooleanDatatype;
+import org.openmrs.customdatatype.datatype.LocationDatatype;
 import org.openmrs.messagesource.MessageSourceService;
 import org.springframework.stereotype.Component;
 
 /**
- * Handler for the boolean custom datatype
+ * Handler for the location custom datatype
  */
 @Component
-public class BooleanFieldGenDatatypeHandler implements FieldGenDatatypeHandler<BooleanDatatype, Boolean> {
+public class LocationFieldGenDatatypeHandler implements FieldGenDatatypeHandler<LocationDatatype, String> {
 	
 	/**
 	 * @see org.openmrs.customdatatype.CustomDatatypeHandler#setHandlerConfiguration(java.lang.String)
@@ -45,7 +45,7 @@ public class BooleanFieldGenDatatypeHandler implements FieldGenDatatypeHandler<B
 	 */
 	@Override
 	public String getWidgetName() {
-		return "boolean";
+		return "location";
 	}
 	
 	/**
@@ -53,29 +53,24 @@ public class BooleanFieldGenDatatypeHandler implements FieldGenDatatypeHandler<B
 	 */
 	@Override
 	public Map<String, Object> getWidgetConfiguration() {
-		MessageSourceService mss = Context.getMessageSourceService();
 		Map<String, Object> ret = new HashMap<String, Object>();
-		ret.put("isNullable", "false");
-		ret.put("trueLabel", mss.getMessage("general.true"));
-		ret.put("falseLabel", mss.getMessage("general.false"));
 		return ret;
-	
 	}
 	
 	/**
 	 * @see org.openmrs.web.attribute.handler.FieldGenDatatypeHandler#getValue(org.openmrs.customdatatype.CustomDatatype, javax.servlet.http.HttpServletRequest, java.lang.String)
 	 */
 	@Override
-	public Boolean getValue(org.openmrs.customdatatype.datatype.BooleanDatatype datatype, HttpServletRequest request,
+	public String getValue(org.openmrs.customdatatype.datatype.LocationDatatype datatype, HttpServletRequest request,
 	        String formFieldName) throws InvalidCustomValueException {
 		String result = request.getParameter(formFieldName);
 		if (StringUtils.isBlank(result))
 			return null;
 		try {
-			return Boolean.valueOf(result);
+			return result;
 		}
 		catch (Exception ex) {
-			throw new InvalidCustomValueException("Invalid boolean: " + result);
+			throw new InvalidCustomValueException("Invalid string: " + result);
 		}
 	}
 	
@@ -83,15 +78,15 @@ public class BooleanFieldGenDatatypeHandler implements FieldGenDatatypeHandler<B
 	 * @see org.openmrs.web.attribute.handler.HtmlDisplayableDatatypeHandler#toHtmlSummary(org.openmrs.customdatatype.CustomDatatype, java.lang.String)
 	 */
 	@Override
-	public CustomDatatype.Summary toHtmlSummary(CustomDatatype<Boolean> datatype, String valueReference) {
-		return new CustomDatatype.Summary(valueReference, true);
+	public CustomDatatype.Summary toHtmlSummary(CustomDatatype<String> datatype, String valueReference) {
+		return new CustomDatatype.Summary(toHtml(datatype, valueReference), true);
 	}
 	
 	/**
 	 * @see org.openmrs.web.attribute.handler.HtmlDisplayableDatatypeHandler#toHtml(org.openmrs.customdatatype.CustomDatatype, java.lang.String)
 	 */
 	@Override
-	public String toHtml(CustomDatatype<Boolean> datatype, String valueReference) {
+	public String toHtml(CustomDatatype<String> datatype, String valueReference) {
 		return valueReference;
 	}
 }
